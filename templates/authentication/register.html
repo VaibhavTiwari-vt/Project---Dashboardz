@@ -1,0 +1,145 @@
+{% extends "base_auth.html" %}
+{% block auth %}
+<div class="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
+    <div class="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]" aria-hidden="true">
+        <div class="relative left-1/2 -z-10 aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-40rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+    </div>
+    <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-balance text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">Account Registration</h2>
+        <p class="mt-2 text-lg/8 text-gray-600">Welcome to DashboardZ! Empowering connections, one registration at a time.<p>
+    </div>
+    {% include "messages.html" %}
+    <form action="{% url 'register' %}" method="POST" class="mx-auto mt-16 max-w-xl sm:mt-20">
+        {% csrf_token %}
+        <div class="sm:col-span-2">
+            <label for="Username" class="block text-sm/6 font-semibold text-gray-900">Username</label>
+            <div class="mt-2.5">
+                <input type="text" name="username" id="username" value="{{ fieldValues.username }}" required class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600">
+            </div>
+            <div class="invalid_feedback" style="display:none"></div>
+        </div>
+        <div class="sm:col-span-2">
+            <label for="Email" class="block text-sm/6 font-semibold text-gray-900">Email</label>
+            <div class="mt-2.5">
+                <input type="email" name="email" id="email" value="{{ fieldValues.email }}" required class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600">
+            </div>
+            <div class="emailFeedbackArea" style="display:none"></div>
+        </div>
+        <div class="sm:col-span-2 mt-3">
+            <label for="Password" class="block text-sm/6 font-semibold text-gray-900">Password</label>
+            <div class="mt-2.5 relative">
+                <input type="password" name="password" id="password" class="block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600">
+                <label for="toggle-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600">
+                    <input type="checkbox" id="toggle-password" class="mr-2">
+                </label>
+            </div>            
+        </div>
+        <div class="mt-10">
+            <button type="submit" id="submitBtn" disabled class="opacity-50 block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Register</button>
+        </div>
+    </form>
+    <p class="mt-6 text-center text-sm text-gray-600">
+        Already have an account? 
+        <a href="{% url "login" %}" class="font-semibold text-indigo-600 hover:text-indigo-500">
+            Log in
+        </a>
+    </p>
+</div>
+
+<script>
+    const passwordField = document.getElementById('password');
+    const togglePasswordCheckbox = document.getElementById('toggle-password');
+    const usernameField=document.getElementById('username');
+    const feedBackArea=document.querySelector('.invalid_feedback');
+    const emailField=document.getElementById('email');
+    const emailFeedBackArea=document.querySelector('.emailFeedbackArea');
+    const submitBtn=document.getElementById("submitBtn");
+    let typingTimer;
+    togglePasswordCheckbox.addEventListener('change', function () {
+        const type = togglePasswordCheckbox.checked ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+    });
+    //username validation
+
+    function checkFormValidity() {
+        if (feedBackArea.style.display==='block' || emailFeedBackArea.style.display==='block' || emailField.value==="" || usernameField.value==="") {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+    window.addEventListener('DOMContentLoaded', function() {
+        checkFormValidity();
+    });
+    
+    usernameField.addEventListener('keyup',(e)=>{              //Can also use function over here
+        clearTimeout(typingTimer);
+        const usernameVal=e.target.value;
+        usernameField.classList.remove("is-invalid");  //Remove the is-invalid when the error is removed
+        feedBackArea.style.display="none";
+        submitBtn.disabled = true;
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        if(usernameVal.length>0){
+            typingTimer = setTimeout(() => {
+            fetch('/authentication/validate-username',{
+                body:JSON.stringify({username:usernameVal}),
+                method:"POST",
+            }).then(
+                response=>response.json()
+            ).then(
+                data=>{                 //Processing the data converted to json
+                    if(data.username_error){
+                        submitBtn.disabled = true;
+                        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                        usernameField.classList.add('border-red-500');
+                        feedBackArea.textContent = data.username_error;
+                        feedBackArea.style.display = 'block';
+                        feedBackArea.classList.add('text-red-500');
+                    }
+                    else{
+                        submitBtn.disabled=false;
+                        submitBtn.classList.remove('opacity-50','cursor-not-allowed')
+                    }
+                    checkFormValidity();
+                }
+            );},500);
+        }
+    });
+
+//email validation
+emailField.addEventListener('keyup',(e)=>{                  //Can also use function over here
+    clearTimeout(typingTimer);
+    const emailVal=e.target.value;
+    emailField.classList.remove("is-invalid");
+    emailFeedBackArea.style.display="none";
+    submitBtn.disabled = true;
+    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    if(emailVal.length>0){
+        typingTimer = setTimeout(() => {
+        fetch('/authentication/validate-email',{
+            body:JSON.stringify({email:emailVal}),
+            method:"POST",
+        }).then(response=>response.json()).then(
+            data=>{
+                if(data.email_error){
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    emailField.classList.add('border-red-500');
+                    emailFeedBackArea.textContent=data.email_error;
+                    emailFeedBackArea.style.display="block";
+                    emailFeedBackArea.classList.add('text-red-500');
+                }
+                else{
+                    submitBtn.disabled=false;
+                    submitBtn.classList.remove('opacity-50','cursor-not-allowed')
+                }
+                checkFormValidity();
+            }
+        );},500);
+    }
+});
+
+</script>
+{% endblock auth %}
