@@ -164,8 +164,8 @@ ACCOUNT_LOGOUT_REDIRECT_URL = 'http://127.0.0.1:8000/authentication/'
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': '921319401302-9ou7157e22dsucpf1fmefo8bht5tbivv.apps.googleusercontent.com',
-            'secret': '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',
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID'),
+            'secret': os.environ.get('GOOGLE_CLIENT_SECRET'),
         },
         'SCOPE': ['email', 'profile'],
         "AUTH_PARAMS": {
