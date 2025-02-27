@@ -16,7 +16,8 @@ from .utils import token_generator
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 import threading
-
+def tos(request):
+    return render(request,"authentication/terms-of-service.html")
 class LoginView(View):
     def post(self,request):
         username=request.POST['username']
@@ -29,8 +30,8 @@ class LoginView(View):
             if user:
                 if user.is_active:
                     login(request,user)
-                    messages.success(request,'Welcome, '+username+' You are now logged in')
-                    return redirect('login')
+                    messages.success(request,'Welcome '+username+' , You are now logged in')
+                    return redirect('records')
                 messages.error(request,"Account is not active, check your email",context)
                 return render(request,'authentication/login.html')
             messages.error(request,"Invalid username or password")

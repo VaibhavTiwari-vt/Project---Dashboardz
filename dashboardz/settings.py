@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-+bkuo)5vg+wjkd+(&+1&y$zn*cewhznznt75b(y7@!h3ui&m&+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -43,6 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +56,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -86,7 +92,11 @@ DATABASES = {
         'USER':os.getenv('DB_USER'),
         'PASSWORD':os.getenv('DB_PASSWORD'),
         'HOST':os.getenv('DB_HOST'),
-        'PORT':os.getenv('DB_PORT')
+        'PORT':os.getenv('DB_PORT'),
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -141,3 +151,37 @@ EMAIL_USE_TLS=True    #Transfer security
 DEFAULT_FROM_EMAIL=os.environ.get('EMAIL_HOST_USER')
 EMAIL_PORT=587
 EMAIL_HOST_PASSWORD=os.environ.get('EMAIL_HOST_PASSWORD')
+
+#For OAuth Api Implementation
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+SITE_ID = 1
+LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'http://127.0.0.1:8000/authentication/'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': '921319401302-9ou7157e22dsucpf1fmefo8bht5tbivv.apps.googleusercontent.com',
+            'secret': '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',
+        },
+        'SCOPE': ['email', 'profile'],
+        "AUTH_PARAMS": {
+            "prompt": "select_account"
+        },
+    }
+}
+
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_SIGNUP_REDIRECT_URL = "/"
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_LOGIN_REDIRECT_URL = "/"
+
+# Auto-redirect to Google login
+ACCOUNT_ADAPTER = "authentication.adapters.MyAccountAdapter"

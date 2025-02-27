@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block records %}
+<div class="min-h-full">
+    
+    <div class="grid grid-cols-12 h-screen">
+      <div class="col-span-2">
+        {% include "partials/sidebar.html" %}
+      </div>
+      <main class="col-span-10 h-fit bg-white rounded-3xl m-4 p-6 shadow-lg">
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div class="flex justify-between items-center w-full">
+            <form action="/search" class="max-w-[480px] w-full px-4">
+              <div class="relative">
+                  <input type="text" name="q" class="w-full border h-12 shadow p-4 rounded-full dark:text-gray-800 dark:border-gray-700 dark:bg-gray-200" placeholder="Search">
+                  <button type="submit">
+                      <svg class="text-teal-400 h-5 w-5 absolute top-3.5 right-3 fill-current dark:text-teal-300"
+                          xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+                          x="0px" y="0px" viewBox="0 0 56.966 56.966"
+                          style="enable-background:new 0 0 56.966 56.966;" xml:space="preserve">
+                          <path
+                              d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z">
+                          </path>
+                      </svg>
+                  </button>
+              </div>
+          </form>
+          <div class="flex flex-col justify-center">
+              {% include "messages.html" %}
+            </div>
+          </div>
+          <div class="flex flex-col">
+            <div class="-m-1.5 overflow-x-auto">
+              <div class="p-1.5 min-w-full inline-block align-middle">
+                <div class="border rounded-lg overflow-hidden">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Field 1</th>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Field 2</th>
+                        <th scope="col" class="px-9 py-3 text-start text-xs font-medium text-gray-500 uppercase">Description</th>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Date</th>
+                        <th scope="col" class="px-8 py-3 text-end text-xs font-medium text-gray-500 uppercase">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                      <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">John Brown</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">45</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">New York No. 1 Lake Park</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">X</td>
+                        <td class="px-4 py-4 whitespace-nowrap text-end text-sm font-medium">
+                          <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">Edit</button>
+                          <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">Delete</button>
+                        </td>
+                      </tr>
+          
+                      <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Jim Green</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">27</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">London No. 1 Lake Park</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">X</td>
+                        <td class="px-4 py-4 whitespace-nowrap text-end text-sm font-medium">
+                          <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">Edit</button>
+                          <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">Delete</button>
+                        </td>
+                      </tr>
+          
+                      <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Joe Black</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">31</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">Sidney No. 1 Lake Park</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">X</td>
+                        <td class="px-4 py-4 whitespace-nowrap text-end text-sm font-medium">
+                          <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">Edit</button>
+                          <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">Delete</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+          <div class="flex flex-1 justify-between sm:hidden">
+            <a href="#" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
+            <a href="#" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
+          </div>
+          <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm text-gray-700">
+                Showing
+                <span class="font-medium">1</span>
+                to
+                <span class="font-medium">10</span>
+                of
+                <span class="font-medium">100</span>
+                results
+              </p>
+            </div>
+            <div>
+              <nav class="isolate inline-flex -space-x-px rounded-md shadow-xs" aria-label="Pagination">
+                <a href="#" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                  <span class="sr-only">Previous</span>
+                  <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                    <path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
+                  </svg>
+                </a>
+                <a href="#" aria-current="page" class="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">1</a>
+                <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0">2</a>
+                <a href="#" class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex">3</a>
+                <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-gray-300 ring-inset focus:outline-offset-0">...</span>
+                <a href="#" class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex">8</a>
+                <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0">9</a>
+                <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0">10</a>
+                <a href="#" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                  <span class="sr-only">Next</span>
+                  <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                    <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                  </svg>
+                </a>
+              </nav>
+            </div>
+          </div>
+        </div>
+        
+      </main>
+    </div>
+    
+  </div>
+  
+{% endblock records %}

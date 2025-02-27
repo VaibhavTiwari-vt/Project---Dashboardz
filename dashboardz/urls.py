@@ -16,9 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-
+from django.shortcuts import redirect
+from records import views
+from django.conf.urls import handler404
+def google_login_redirect(request):
+    return redirect('/accounts/google/login/?process=login')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('records.urls')),
     path('authentication/',include('authentication.urls')),
+    path('accounts/login/', google_login_redirect),
+    path('accounts/', include('allauth.urls')),
 ]
+handler404=views.error404
