@@ -1,5 +1,7 @@
 {% extends "base.html" %}
+{% load static %}
 {% block records %}
+<script src="{% static "js/confirmDelete.js" %}"></script>
 <div class="min-h-full">
     
     <div class="grid grid-cols-12 h-screen">
@@ -37,50 +39,78 @@
                   <table class="min-w-full divide-y divide-gray-200">
 <!--Table Head-->
                     <thead class="bg-gray-50">
+                      {% if field_names %}
+                      {% for field_name in field_names  %}
                       <tr>
-                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Field 1</th>
-                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Field 2</th>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">{{field_name.field_1}}</th>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">{{field_name.field_2}}</th>
                         <th scope="col" class="px-9 py-3 text-start text-xs font-medium text-gray-500 uppercase">Description</th>
-                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Date</th>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">{{field_name.field_3}}</th>
                         <th scope="col" class="px-8 py-3 text-end text-xs font-medium text-gray-500 uppercase">Action</th>
                       </tr>
+                      {% endfor %}
+                      {% else %}
+                      <tr>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">-</th>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">-</th>
+                        <th scope="col" class="px-9 py-3 text-start text-xs font-medium text-gray-500 uppercase">Description</th>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">-</th>
+                        <th scope="col" class="px-8 py-3 text-end text-xs font-medium text-gray-500 uppercase">Action</th>
+                      </tr>
+                      {% endif %}
                     </thead>
-<!--Table Body-->
+<!--Table Body-->    
+                    {% if field_values %}
+                    <tbody class="divide-y divide-gray-200">
+                      {% for field_value in field_values %}
+                      <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{field_value.field_1}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{field_value.field_2}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{field_value.description}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{field_value.field_3}}</td>
+                        <td class="px-4 py-4 whitespace-nowrap text-end text-sm font-medium">
+                          <a href="{% url "edit-table-data" %}"><button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">Edit</button><a>
+                          <button type="button" onclick="openModal('1')" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">Delete</button>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                    {% else %}
                     <tbody class="divide-y divide-gray-200">
                       <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">John Brown</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">45</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">New York No. 1 Lake Park</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">X</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">-</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">-</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">-</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">-</td>
                         <td class="px-4 py-4 whitespace-nowrap text-end text-sm font-medium">
-                          <a href="{% url "edit-table-data" %}"><button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">Edit</button><a>
-                          <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">Delete</button>
-                        </td>
-                      </tr>
-          
-                      <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Jim Green</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">27</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">London No. 1 Lake Park</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">X</td>
-                        <td class="px-4 py-4 whitespace-nowrap text-end text-sm font-medium">
-                          <a href="{% url "edit-table-data" %}"><button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">Edit</button><a>
-                          <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">Delete</button>
-                        </td>
-                      </tr>
-          
-                      <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Joe Black</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">31</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">Sidney No. 1 Lake Park</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">X</td>
-                        <td class="px-4 py-4 whitespace-nowrap text-end text-sm font-medium">
-                          <a href="{% url "edit-table-data" %}"><button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">Edit</button><a>
-                          <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">Delete</button>
+                          <a href="{% url "edit-table-data" %}"><button type="button" disabled class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">Edit</button><a>
+                          <button type="button" disabled onclick="openModal('1')" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">Delete</button>
                         </td>
                       </tr>
                     </tbody>
+                    {% endif %}
                   </table>
+                    {% comment %} <div class="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,var(--color-indigo-100),white)] opacity-20"></div>
+                    <div class="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-white shadow-xl ring-1 shadow-indigo-600/10 ring-indigo-50 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center"></div>
+                    <div class="mx-auto max-w-2xl lg:max-w-4xl">
+                      <img class="mx-auto h-12" src="https://tailwindcss.com/plus-assets/img/logos/workcation-logo-indigo-600.svg" alt="">
+                      <figure class="mt-10">
+                        <blockquote class="text-center text-xl/8 font-semibold text-gray-900 sm:text-2xl/9">
+                          <p>Please add your first record.</p>
+                        </blockquote>
+                        <figcaption class="mt-10">
+                          <img class="mx-auto size-10 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                          <div class="mt-4 flex items-center justify-center space-x-3 text-base">
+                            <div class="font-semibold text-gray-900">Judith Black</div>
+                            <svg viewBox="0 0 2 2" width="3" height="3" aria-hidden="true" class="fill-gray-900">
+                              <circle cx="1" cy="1" r="1" />
+                            </svg>
+                            <div class="text-gray-600">CEO of Workcation</div>
+                          </div>
+                        </figcaption>
+                      </figure>
+                    </div> {% endcomment %}
+
                 </div>
               </div>
             </div>
@@ -136,5 +166,5 @@
     </div>
     
   </div>
-  
+{% include "partials/modal.html" %}
 {% endblock records %}

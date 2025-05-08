@@ -2,11 +2,13 @@
 {% block records %}
 
 <div class="grid grid-cols-12 h-screen">
+{% comment %} Including Side Bar {% endcomment %}
     <div class="col-span-2">
       {% include "partials/sidebar.html" %}
     </div>
+{% comment %} Table Form Starting {% endcomment %}
     <main class="col-span-10 h-auto bg-white rounded-3xl m-4 p-6 shadow-lg">
-        <form action="" method="post">
+        <form action="{% url "add-table" %}" method="post">
             {% csrf_token %}
             <div class="space-y-12">
               <div class="border-b border-gray-900/10 pb-5 flex justify-between items-center">
@@ -20,9 +22,9 @@
               </div>
                 <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                     <div class="sm:col-span-3">
-                      <label for="table-name" class="block text-sm/6 font-medium text-gray-900">Table Name</label>
+                      <label for="table_name" class="block text-sm/6 font-medium text-gray-900">Table Name</label>
                       <div class="mt-2">
-                        <input type="text" name="table-name" id="table-name" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+                        <input type="text" name="table_name" id="table_name" value="{{user_entry.table_name}}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
                       </div>
                     </div>
                 </div>
@@ -33,31 +35,31 @@
           
                 <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div class="sm:col-span-3">
-                    <label for="field-1" class="block text-sm/6 font-medium text-gray-900">Field-1 Name</label>
+                    <label for="field1_name" class="block text-sm/6 font-medium text-gray-900">Field-1 Name</label>
                     <div class="mt-2">
-                      <input type="text" name="field-1" id="field-1" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+                      <input type="text" name="field1_name" id="field1_name" value="{{user_entry.field1_name}}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
                     </div>
                   </div>
           
                   <div class="sm:col-span-3">
-                    <label for="field-2" class="block text-sm/6 font-medium text-gray-900">Field-2 Name</label>
+                    <label for="field2_name" class="block text-sm/6 font-medium text-gray-900">Field-2 Name</label>
                     <div class="mt-2">
-                      <input type="text" name="field-2" id="field-2" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+                      <input type="text" name="field2_name" id="field2_name" value="{{user_entry.field2_name}}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
                     </div>
                   </div>
 
                   <div class="sm:col-span-3">
-                    <label for="field-3" class="block text-sm/6 font-medium text-gray-900">Field-3 Name</label>
+                    <label for="field3_name" class="block text-sm/6 font-medium text-gray-900">Field-3 Name</label>
                     <div class="mt-2">
-                      <input type="text" name="field-3" id="field-3" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+                      <input type="text" name="field3_name" id="field3_name" value="{{user_entry.field3_name}}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
                     </div>
                   </div>
                 </div>
               </div>
-
+{% comment %} Checking for first data to be added or not. {% endcomment %}
               <div class="mt-4">
                 <label class="inline-flex items-center">
-                  <input id="add-first-data" name="add-first-data" type="checkbox" class="col-start-1 row-start-1 rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+                  <input id="add_first_data" name="add_first_data" type="checkbox" {% if user_entry.add_first_data %}checked{% endif %} class="col-start-1 row-start-1 rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
                   <span class="ml-2 text-sm text-gray-900">Do you want to enter the first data?</span>
                 </label>
               </div>
@@ -67,36 +69,29 @@
                 
                 <div class="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div class="sm:col-span-3">
-                    <label for="data-1" class="block text-sm/6 font-medium text-gray-900">Field-1 Value</label>
+                    <label for="field1_value" class="block text-sm/6 font-medium text-gray-900">Field-1 Value</label>
                     <div class="mt-2">
-                      <input type="text" name="data-1" id="data-1" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+                      <input type="text" name="field1_value" id="field1_value" value="{{ user_entry.field1_value }}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
                     </div>
                   </div>
 
                   <div class="sm:col-span-3">
-                    <label for="data-2" class="block text-sm/6 font-medium text-gray-900">Field-2 Value</label>
+                    <label for="field2_value" class="block text-sm/6 font-medium text-gray-900">Field-2 Value</label>
                     <div class="mt-2">
-                      <input type="text" name="data-2" id="data-2" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-                    </div>
-                  </div>
-
-                  <div class="sm:col-span-3">
-                    <label for="data-3" class="block text-sm/6 font-medium text-gray-900">Field-3 Value</label>
-                    <div class="mt-2">
-                      <input type="text" name="data-3" id="data-3" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+                      <input type="text" name="field2_value" id="field2_value" value="{{ user_entry.field2_value}}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
                     </div>
                   </div>
                   <div class="col-span-full">
-                    <label for="about" class="block text-sm/6 font-medium text-gray-900">Description</label>
+                    <label for="description" class="block text-sm/6 font-medium text-gray-900">Description</label>
                     <div class="mt-2">
-                      <textarea name="about" id="about" rows="3" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"></textarea>
+                      <textarea name="description" id="description" rows="3" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">{{ user_entry.description}}</textarea>
                     </div>
                     <p class="mt-3 text-sm/6 text-gray-600">Write a few words about your data.</p>
                   </div>
                 <div class="sm:col-span-3">
-                    <label for="date" class="block text-sm font-medium text-gray-900">Select Date</label>
+                    <label for="field3_value" class="block text-sm font-medium text-gray-900">Field-3 Date</label>
                     <div class="mt-2">
-                        <input type="date" id="date" name="date"
+                        <input type="date" id="field3_value" name="field3_value" value=""
                             class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                     </div>
                   </div>
@@ -104,18 +99,33 @@
               </div>
 
               <div class="mt-6 flex items-center justify-end gap-x-6">
-                <button type="button" class="text-sm/6 font-semibold text-gray-900">Cancel</button>
-                <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
+                <a href="{% url "records" %}"><button type="button" class="text-sm/6 font-semibold text-gray-900">Cancel</button></a>
+                <button type="submit" name="action" value="another" class="text-sm/6 font-semibold text-gray-900 hover:text-blue-900">Add Another</button>
+                <button type="submit" name="action" value="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
               </div>
           </form>
+{% comment %} Ending the form. {% endcomment %}
     </main>
 </div>
 
 <script>
-  document.getElementById('add-first-data').addEventListener('change', function() {
-    var form = document.getElementById('first-data-form');
-    form.classList.toggle('hidden', !this.checked);
-  });
+  document.addEventListener("DOMContentLoaded", function () {
+    const checkbox = document.getElementById("add_first_data");
+    const form = document.getElementById("first-data-form");
+    const field3_value = document.getElementById("field3_value");
+    if (checkbox.checked) {
+        form.classList.remove("hidden");
+        field3_value.value = new Date().toISOString().split('T')[0];
+    }
+    checkbox.addEventListener("change", function () {
+        form.classList.toggle("hidden", !this.checked);
+        if (this.checked) {
+            field3_value.value = new Date().toISOString().split('T')[0];  
+        } else {
+            field3_value.value = "";
+        }
+    });
+});
 </script>
 
 {% endblock records %}

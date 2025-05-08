@@ -2,8 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+#Database has been created manually . Hence it will not be managed from django, you have to make changes manually bia workbench.
 class RecordsName(models.Model):
     name = models.CharField(unique=True, max_length=45, blank=True, null=True)
+    owner = models.ForeignKey(User, models.DO_NOTHING, db_column='owner', to_field='username')
 
     class Meta:
         managed = False
@@ -18,6 +20,7 @@ class RecordsName(models.Model):
 class Field2Names(models.Model):
     name = models.CharField(max_length=45)
     records_name = models.ForeignKey('RecordsName', models.DO_NOTHING)
+    owner = models.ForeignKey(User, models.DO_NOTHING, db_column='owner', to_field='username')
 
     class Meta:
         managed = False
@@ -36,6 +39,7 @@ class FieldNames(models.Model):
     field_2 = models.CharField(max_length=45, blank=True, null=True)
     field_3 = models.CharField(max_length=45, blank=True, null=True)
     records_name = models.ForeignKey('RecordsName', models.DO_NOTHING)
+    owner = models.ForeignKey(User, models.DO_NOTHING, db_column='owner', to_field='username')
 
     class Meta:
         managed = False
@@ -45,7 +49,7 @@ class FieldNames(models.Model):
 
 
 class FieldValues(models.Model):
-    field_1 = models.FloatField()
+    field_1 = models.DecimalField(max_digits=20, decimal_places=3)
     field_2 = models.ForeignKey(Field2Names, models.DO_NOTHING)
     field_3 = models.DateField(default=timezone.now)
     description = models.TextField()
