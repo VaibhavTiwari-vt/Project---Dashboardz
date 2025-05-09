@@ -8,6 +8,6 @@ urlpatterns = [
     path("privacy-policy",views.privacy_policy,name="privacy-policy"),
     path("add-table",views.AddTableView.as_view(),name="add-table"),
     path("add-table-data/<int:id>",views.AddTableDataView.as_view(),name="add-table-data"),
-    path("edit-table-data",views.EditTableDataView.as_view(),name="edit-table-data"),
+    path("edit-table-data/<int:id>",views.EditTableDataView.as_view(),name="edit-table-data"),
     path("delete-table-data/<int:id>",views.DeleteTableDataView,name="delete-table-data"),
 ]
