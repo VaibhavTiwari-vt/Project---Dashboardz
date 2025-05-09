@@ -16,10 +16,12 @@ def privacy_policy(request):
 def main(request,id=None):
     if request.user.is_authenticated:
         record_name_instance=RecordsName.objects.filter(owner=request.user)
+        #Checking if user just created an account.
         if record_name_instance:
+            #Checking if user just logged in or clicked on the records name.
             if id:
                 record_name_instance=RecordsName.objects.get(id=id,owner=request.user)
-                field_values=FieldValues.objects.filter(records_name=record_name_instance,owner=request.user)
+                field_values=FieldValues.objects.filter(records_name=record_name_instance,owner=request.user).order_by("id")
                 #field_name cannot be processed directly in the DTL as it is not a list(its a query set representation), so we need to use for in DTL.
                 field_names=FieldNames.objects.filter(records_name=record_name_instance,owner=request.user)
                 records_name=RecordsName.objects.filter(owner=request.user)
@@ -27,11 +29,12 @@ def main(request,id=None):
                 return render(request,'records/records.html',context)
             else :
                 record_name_instance_first=RecordsName.objects.filter(owner=request.user).first()
-                field_values=FieldValues.objects.filter(records_name=record_name_instance_first,owner=request.user)
+                field_values=FieldValues.objects.filter(records_name=record_name_instance_first,owner=request.user).order_by("id")
                 field_names=FieldNames.objects.filter(records_name=record_name_instance_first,owner=request.user)
                 records_name=RecordsName.objects.filter(owner=request.user)
                 context={'records_name':records_name,'field_values':field_values,'field_names':field_names}
                 return render(request,'records/records.html',context)
+        #If user just created an account , rendering the usual page.
         else:
             return render(request,'records/records.html')
     return render(request, 'main.html')
@@ -110,15 +113,17 @@ class AddTableDataView(LoginRequiredMixin,View):
         #Getting record names for sidebar
         records_name=RecordsName.objects.filter(owner=request.user)
         #Getting single record name for field2 names
-        single_record_name=RecordsName.objects.get(id=id)
+        single_record_name=RecordsName.objects.get(id=id,owner=request.user)
         #Filtering field2 names
         field2_names=Field2Names.objects.filter(records_name=single_record_name,owner=request.user)
+        field_names=FieldNames.objects.get(records_name=single_record_name,owner=request.user)
         return {
             'user_entry':request.POST,
             'Field2Names':field2_names,
             'records_name':records_name,
             'user_entry':request.POST,
-            'single_record_name':single_record_name
+            'single_record_name':single_record_name,
+            'field_names':field_names
         }
     def get(self,request,id):
         context=self.get_context(request,id)
@@ -158,10 +163,28 @@ class AddTableDataView(LoginRequiredMixin,View):
         messages.success(request, "Data added successfully in "+str(records_name_instance)+".")
         return redirect("add-table-data", id=id) if action == 'another' else redirect("records")
 
+@method_decorator(never_cache, name='dispatch')
 class EditTableDataView(LoginRequiredMixin,View):
     login_url=reverse_lazy("login")
     redirect_field_name = "next"
-    def get(self,request):
-        return render(request, 'records/edit-table-data.html')
-    def post(self,request):
+    def get_context(self,request,id):
+        #Getting record names for sidebar
+        records_name=RecordsName.objects.filter(owner=request.user)
+        #Getting single record name for field2 names
+        single_record_name=FieldValues.objects.get(id=id,owner=request.user).records_name
+        #Filtering field2 names
+        field2_names=Field2Names.objects.filter(records_name=single_record_name,owner=request.user)
+        field_names=FieldNames.objects.get(records_name=single_record_name,owner=request.user)
+        return {
+            'user_entry':request.POST,
+            'Field2Names':field2_names,
+            'records_name':records_name,
+            'user_entry':request.POST,
+            'single_record_name':single_record_name,
+            'field_names':field_names
+        }
+    def get(self,request,id):
+        context=self.get_context(request,id)
+        return render(request, 'records/edit-table-data.html',context)
+    def post(self,request,id):
         return redirect("records")
