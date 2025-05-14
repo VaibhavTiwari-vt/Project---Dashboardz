@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from .models import RecordsName,FieldNames,FieldValues,Field2Names
+from decimal import Decimal, InvalidOperation
 
 def error404(request,exception):
     return render(request,"errors/error404.html",status=404)
@@ -121,7 +122,6 @@ class AddTableDataView(LoginRequiredMixin,View):
             'user_entry':request.POST,
             'Field2Names':field2_names,
             'records_name':records_name,
-            'user_entry':request.POST,
             'single_record_name':single_record_name,
             'field_names':field_names
         }
@@ -144,11 +144,13 @@ class AddTableDataView(LoginRequiredMixin,View):
             messages.error(request, "Please fill all fields")
             return render(request, 'records/add-table-data.html',context)
         #Checking whether field 1 is a number or not.
-        if not field1_value.isdigit():
-            messages.error(request, "Please enter valid number for Field-1")
-            return render(request, 'records/add-table-data.html',context)
+        try:
+            field1_decimal = Decimal(field1_value)
+        except (InvalidOperation, TypeError):
+            messages.error(request, "Please enter a valid number for Field-1")
+            return render(request, 'records/add-table-data.html', context)
         #Checking for Field 1 limit.
-        if int(field1_value)>field1_limit:
+        if field1_decimal>field1_limit:
             messages.error(request,"Limit Exceeding!")
             return render(request, 'records/add-table-data.html',context)
         #Creating instances.
@@ -158,10 +160,11 @@ class AddTableDataView(LoginRequiredMixin,View):
         field2_name_instance = Field2Names.objects.get(name=field2_value)
         records_name_instance = RecordsName.objects.get(id=id)
         #Creating the object in the required field.
-        FieldValues.objects.create(owner=owner,field_1=field1_value,field_2=field2_name_instance,description=description,field_3=field3_value,records_name=records_name_instance)
+        FieldValues.objects.create(owner=owner,field_1=field1_decimal,field_2=field2_name_instance,description=description,field_3=field3_value,records_name=records_name_instance)
         action = request.POST.get('action')
         messages.success(request, "Data added successfully in "+str(records_name_instance)+".")
-        return redirect("add-table-data", id=id) if action == 'another' else redirect("records")
+        #Will redirect to the same page or to the data of current record.
+        return redirect("add-table-data", id=id) if action == 'another' else redirect("records",id=id)
 
 @method_decorator(never_cache, name='dispatch')
 class EditTableDataView(LoginRequiredMixin,View):
@@ -175,16 +178,65 @@ class EditTableDataView(LoginRequiredMixin,View):
         #Filtering field2 names
         field2_names=Field2Names.objects.filter(records_name=single_record_name,owner=request.user)
         field_names=FieldNames.objects.get(records_name=single_record_name,owner=request.user)
+        #Getting the field values for user requested id.
+        field_value_id=FieldValues.objects.get(id=id,owner=request.user)
         return {
             'user_entry':request.POST,
             'Field2Names':field2_names,
             'records_name':records_name,
-            'user_entry':request.POST,
             'single_record_name':single_record_name,
-            'field_names':field_names
+            'field_names':field_names,
+            'field_value_id':field_value_id
         }
     def get(self,request,id):
         context=self.get_context(request,id)
         return render(request, 'records/edit-table-data.html',context)
     def post(self,request,id):
-        return redirect("records")
+        #Setting Limit for the field 1
+        field1_limit=999999
+        #call context method to get the context
+        context=self.get_context(request,id)
+        #Getting the field values for user requested id.
+        field_value_id = context['field_value_id']
+        field1_value=request.POST['field1_value']
+        field2_value=request.POST['field2_value']
+        field3_value=request.POST['date']
+        description=request.POST['description']
+        owner=request.user
+        #Checking for any empty field.
+        if not field1_value or not field2_value or not field3_value or not description:
+            messages.error(request, "Please fill all fields")
+            return render(request, 'records/edit-table-data.html',context)
+        #Checking whether field 1 is a number or not.
+        try:
+            #Converting it to decimal.
+            field1_decimal = Decimal(field1_value)
+        except (InvalidOperation, TypeError):
+            messages.error(request, "Please enter a valid number for Field-1")
+            return render(request, 'records/edit-table-data.html', context)
+        #Checking for Field 1 limit.
+        if field1_decimal>field1_limit:
+            messages.error(request,"Limit Exceeding!")
+            return render(request, 'records/edit-table-data.html',context)
+        field2_name_instance = Field2Names.objects.get(name=field2_value)
+        records_name_instance = field_value_id.records_name
+        #field_value_id is a model instance and not a dictionary hence field_value_id['key'] is not a valid syntax.
+        #Replacing the previous data with the new one.
+        field_value_id.owner = owner
+        field_value_id.field_1 = field1_decimal
+        field_value_id.field_2 = field2_name_instance
+        field_value_id.description = description
+        field_value_id.field_3 = field3_value
+        field_value_id.records_name = records_name_instance
+        #Saving the changes.
+        field_value_id.save()
+        #Returning the message.
+        messages.success(request, "Data updated successfully in "+str(records_name_instance)+".")
+        #Will redirect to the data of current record.
+        return redirect("records",id=records_name_instance.id)
+
+#Edit Page 
+#Delete Page
+#Records page for first time table creation
+#Records page for first time user entry
+#Select other funtionality for Field2 Names in add-table , add-table-data page.
