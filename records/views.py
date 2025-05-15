@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from .models import RecordsName,FieldNames,FieldValues,Field2Names
 from decimal import Decimal, InvalidOperation
+from django.http import HttpResponseNotAllowed
 
 def error404(request,exception):
     return render(request,"errors/error404.html",status=404)
@@ -14,7 +15,7 @@ def error404(request,exception):
 def privacy_policy(request):
     return render(request,"records/privacy-policy.html")
 @never_cache
-def main(request,id=None):
+def main(request,id):
     if request.user.is_authenticated:
         record_name_instance=RecordsName.objects.filter(owner=request.user)
         #Checking if user just created an account.
@@ -39,11 +40,6 @@ def main(request,id=None):
         else:
             return render(request,'records/records.html')
     return render(request, 'main.html')
-
-def DeleteTableDataView(request,id):
-    if request.method == "POST":
-        messages.success(request, "Data has been deleted.")
-        return redirect('records')
 
 class AddTableView(LoginRequiredMixin,View):
     login_url=reverse_lazy("login")
@@ -235,8 +231,27 @@ class EditTableDataView(LoginRequiredMixin,View):
         #Will redirect to the data of current record.
         return redirect("records",id=records_name_instance.id)
 
+@never_cache
+def DeleteTableDataView(request,id):
+    if request.method == "POST":
+        #Fetching the field_value data
+        field_value_id=FieldValues.objects.get(id=id,owner=request.user)
+        #Fetching the record_name_instance
+        records_name_instance = field_value_id.records_name
+        #Deleting the Field_value data
+        field_value_id.delete()
+        messages.success(request, "Data has been deleted from "+str(records_name_instance)+".")
+        return redirect('records',id=records_name_instance.id)
+    else:
+        #Returning error message if another other Method apart from POST is used.
+        messages.error(request,"Invalid Operation.")
+        return redirect('records')
+
+
 #Edit Page 
 #Delete Page
 #Records page for first time table creation
 #Records page for first time user entry
 #Select other funtionality for Field2 Names in add-table , add-table-data page.
+#Edit Record Name
+#Delete complete record
