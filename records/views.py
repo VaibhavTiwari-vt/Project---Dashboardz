@@ -15,7 +15,7 @@ def error404(request,exception):
 def privacy_policy(request):
     return render(request,"records/privacy-policy.html")
 @never_cache
-def main(request,id):
+def main(request,id=None):
     if request.user.is_authenticated:
         record_name_instance=RecordsName.objects.filter(owner=request.user)
         #Checking if user just created an account.
@@ -27,7 +27,7 @@ def main(request,id):
                 #field_name cannot be processed directly in the DTL as it is not a list(its a query set representation), so we need to use for in DTL.
                 field_names=FieldNames.objects.filter(records_name=record_name_instance,owner=request.user)
                 records_name=RecordsName.objects.filter(owner=request.user)
-                context={'records_name':records_name,'field_values':field_values,'field_names':field_names}
+                context={'records_name':records_name,'field_values':field_values,'field_names':field_names,'record_name_instance':record_name_instance}
                 return render(request,'records/records.html',context)
             else :
                 record_name_instance_first=RecordsName.objects.filter(owner=request.user).first()
@@ -248,10 +248,8 @@ def DeleteTableDataView(request,id):
         return redirect('records')
 
 
-#Edit Page 
-#Delete Page
-#Records page for first time table creation
 #Records page for first time user entry
 #Select other funtionality for Field2 Names in add-table , add-table-data page.
 #Edit Record Name
 #Delete complete record
+#Export Pdf and Excel
