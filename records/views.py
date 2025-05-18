@@ -135,6 +135,9 @@ class AddTableDataView(LoginRequiredMixin,View):
         field3_value=request.POST['date']
         description=request.POST['description']
         owner=request.user
+        #Checking if Others option is been selected.
+        if field2_value=='Other':
+            field2_value=request.POST['otherField2_value']
         #Checking for any empty field.
         if not field1_value or not field2_value or not field3_value or not description:
             messages.error(request, "Please fill all fields")
@@ -153,8 +156,9 @@ class AddTableDataView(LoginRequiredMixin,View):
         #You used Foreign key in the model for the below two fields that is why 
         #you need a model instance to save the data as it is different from raw data.
         #E.g. Model Instance = <Field2Names: S3> and raw data = 'S3' or 1 (string or integer).
-        field2_name_instance = Field2Names.objects.get(name=field2_value)
         records_name_instance = RecordsName.objects.get(id=id)
+        #Creating field2_name if not already present.
+        field2_name_instance, _ = Field2Names.objects.get_or_create(name=field2_value,records_name=records_name_instance,owner=request.user)
         #Creating the object in the required field.
         FieldValues.objects.create(owner=owner,field_1=field1_decimal,field_2=field2_name_instance,description=description,field_3=field3_value,records_name=records_name_instance)
         action = request.POST.get('action')
@@ -199,6 +203,9 @@ class EditTableDataView(LoginRequiredMixin,View):
         field3_value=request.POST['date']
         description=request.POST['description']
         owner=request.user
+        #Checking if Others option is been selected.
+        if field2_value=='Other':
+            field2_value=request.POST['otherField2_value']
         #Checking for any empty field.
         if not field1_value or not field2_value or not field3_value or not description:
             messages.error(request, "Please fill all fields")
@@ -214,8 +221,9 @@ class EditTableDataView(LoginRequiredMixin,View):
         if field1_decimal>field1_limit:
             messages.error(request,"Limit Exceeding!")
             return render(request, 'records/edit-table-data.html',context)
-        field2_name_instance = Field2Names.objects.get(name=field2_value)
         records_name_instance = field_value_id.records_name
+        #Creating field2_name if not already present.
+        field2_name_instance, _ = Field2Names.objects.get_or_create(name=field2_value,records_name=records_name_instance,owner=request.user)
         #field_value_id is a model instance and not a dictionary hence field_value_id['key'] is not a valid syntax.
         #Replacing the previous data with the new one.
         field_value_id.owner = owner
@@ -248,8 +256,7 @@ def DeleteTableDataView(request,id):
         return redirect('records')
 
 
-#Records page for first time user entry
-#Select other funtionality for Field2 Names in add-table , add-table-data page.
 #Edit Record Name
 #Delete complete record
+#Delete Field2 Value from select options only
 #Export Pdf and Excel

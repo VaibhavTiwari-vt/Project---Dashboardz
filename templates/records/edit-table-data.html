@@ -39,7 +39,9 @@
                         {% comment %} Comparing ids from different models with ForeignKey Relation.{% endcomment %}
                         <option value="{{Field2Name.name}}" {% if Field2Name.id == field_value_id.field_2.id %}selected{% endif %}>{{Field2Name.name}}</option>
                         {% endfor %}
+                        <option value="Other">Other</option>
                       </select>
+                      <input type="text" name="otherField2_value" id="otherField2_value" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 border border-gray-300 placeholder:text-gray-400 focus:border-none focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 hidden">
                     </div>
                     {% else %}
                     <div class="mt-2">
@@ -73,5 +75,22 @@
     </main>
 </div>
 {% include "partials/modal.html" %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const field2Select = document.getElementById('field2_value');
+    const otherInput = document.getElementById('otherField2_value');
 
+    field2Select.addEventListener('change', function () {
+      if (field2Select.value === 'Other') {
+        otherInput.classList.remove('hidden');
+        {% comment %} otherInput.required = true; {% endcomment %}
+        field2Select.classList.add('hidden');
+      } else {
+        otherInput.classList.add('hidden');
+        otherInput.required = false;
+        field2Select.classList.remove('hidden');
+      }
+    });
+  });
+</script>
 {% endblock records %}
