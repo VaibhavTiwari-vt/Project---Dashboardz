@@ -1,4 +1,4 @@
-# 🗂️ Dashboardz
+# Dashboardz
 
 A full-stack **Dashboard Web Application** built with Python and Django that enables users to create their own custom data tables, manage records with full CRUD operations, and visualise their data through interactive Chart.js charts — all behind a secure, multi-method authentication system.
 
